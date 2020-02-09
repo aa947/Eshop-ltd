@@ -10,7 +10,7 @@ const { check, validationResult } = require('express-validator');
 //connect to db
 mongoose.connect(process.env.MONGO_URL, { useUnifiedTopology: true, useNewUrlParser: true } , (err, db)=>{
     if(err){ console.log(`conection error ${err}`); }
-    console.log(`successfully connected to dataBase: ${db.name}`);
+    // console.log(`successfully connected to dataBase: ${db.name}`);
 })
 
 var db = mongoose.connection;
@@ -27,7 +27,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 //setup public path
-app.use(express.static(path.join(__dirname, 'public')));
+app.use( express.static(path.join(__dirname, 'public')))
 
 //global variable for errors 
 app.locals.errors =null;
@@ -38,9 +38,9 @@ app.use(bodyParser.json());
 //sessions
 app.use(session({
     secret: 'keyboard cat',
-    resave: false,
+    resave: true,
     saveUninitialized: true,
-    cookie: { secure: true }
+    // cookie: { secure: true }
   }));
 
 //express validator
@@ -73,7 +73,9 @@ app.use(function (req, res, next) {
 //routes
 var pages = require('./routes/pages');
 var adminPages = require('./routes/adminPages');
+var adminCategories = require('./routes/adminCategories');
 
+app.use('/admin/categories', adminCategories);
 app.use('/admin/pages', adminPages);
 app.use('/', pages);
 

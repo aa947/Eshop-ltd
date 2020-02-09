@@ -7,7 +7,7 @@
 <a href="/admin/pages/add_page" class="btn btn-primary"> Add page </a>
 <br /> <br />
 
-<table class="table table-striped">
+<table class="table table-striped sorting">
     <thead>
             <tr class="home">
                 <th>Title</th>
@@ -21,11 +21,11 @@
                 <td >
                     <%= element.title %> 
                 </td>
-                <td> <a href="/admin/pages/edit-page/<%= element.slug %>">Edit</a>  </td>
+                <td> <a href="/admin/pages/edit-page/<%= element._id  %>">Edit</a>  </td>
                 <% if(element.slug == 'home'){ %>
                     <td></td>
                 <% } else { %>
-                <td> <a href="/admin/pages/delete-page/<%= element._id %>">Delete</a>  </td>
+                <td> <a class="confirmDeletion" href="/admin/pages/delete-page/<%= element._id %>">Delete</a>  </td>
                 <% } %> 
             </tr>
           <%  }); %>

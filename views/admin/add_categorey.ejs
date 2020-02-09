@@ -1,25 +1,16 @@
 <%- include('../layouts/adminHeader'); -%>
 
-<h2 class="page-title pt-3"> Add a page</h2>
+<h2 class="page-title pt-3"> Add a categorey </h2>
 <br />
-<a href="/admin/pages" class="btn btn-primary"> Back to All  pages </a>
+<a href="/admin/categories" class="btn btn-primary"> Back to All  categories </a>
 <br /> <br />
-<form method="POST" action="/admin/pages/add_page">
+<form method="POST" action="/admin/categories/add_categorey">
     <div class="form-group">
         <label for="">Title:</label>
         <input type="text" class="form-control"  name="title"  value="<%= title %>" placeholder="title" >
     </div>
 
-    <div class="form-group">
-        <label for="">Slug:</label>
-        <input type="text" class="form-control"  name="slug"  value="<%= slug %>" placeholder="slug" >
-    </div>
-
-    <div class="form-group">
-        <label for="">Content:</label>
-        
-        <textarea id="ta" name="content" class="form-control" placeholder="content" cols="30" rows="10"><%= content %></textarea>
-    </div>
+   
 
     <button type="submit" class="btn btn-primary" > Submit </button>
 
