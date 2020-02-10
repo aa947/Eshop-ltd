@@ -378,8 +378,8 @@ router.post('/product-gallery/:id', function (req, res) {
  */
 router.get('/delete-image/:image',  function (req, res) {
 
-    var originalImage = 'public/product_images/' + req.query.id + '/gallery/' + req.params.image;
-    var thumbImage = 'public/product_images/' + req.query.id + '/gallery/thumbs/' + req.params.image;
+    var originalImage = 'public/images/product_imgs/' + req.query.id + '/gallery/' + req.params.image;
+    var thumbImage = 'public/images/product_imgs/' + req.query.id + '/gallery/thumbs/' + req.params.image;
 
     fs.remove(originalImage, function (err) {
         if (err) {
@@ -403,13 +403,13 @@ router.get('/delete-image/:image',  function (req, res) {
 router.get('/delete-product/:id',  function (req, res) {
 
     var id = req.params.id;
-    var path = 'publici/images/product_images/' + id;
+    var path = 'public/images/product_imgs/' + id;
 
     fs.remove(path, function (err) {
         if (err) {
             console.log(err);
         } else {
-            Product.findByIdAndRemove(id, function (err) {
+            ProductModel.findByIdAndRemove(id, function (err) {
                 console.log(err);
             });
             

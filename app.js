@@ -31,8 +31,11 @@ app.set('view engine', 'ejs');
 // app.use('/public', express.static(path.join(__dirname, 'public')))
 app.use( express.static(path.join(__dirname, 'public')))
 
-//global variable for errors 
+//global variables for errors
 app.locals.errors =null;
+
+//global variable for pages
+
 
 // fileUpload
 app.use(fileUpload());
