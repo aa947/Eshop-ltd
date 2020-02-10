@@ -28,6 +28,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 //setup public path
+// app.use('/public', express.static(path.join(__dirname, 'public')))
 app.use( express.static(path.join(__dirname, 'public')))
 
 //global variable for errors 
