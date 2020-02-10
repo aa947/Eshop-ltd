@@ -4,6 +4,7 @@ const { check, validationResult } = require('express-validator');
 var fs = require('fs-extra');
 var mkdirp = require('mkdirp');
 var resizeImg = require('resize-img');
+var isImg = require('../tests/imageValidator');
 
 //require Products model
 var ProductModel = require('../models/products');
@@ -33,63 +34,110 @@ router.get('/', (req, res)=>{
 */
 router.get('/add_product', (req, res)=>{
     var title = "";
-    var slug = "";
-
+    var desc = "";
+    var price = "";
+    CategoreyModel.find().then((cats) =>{
     res.render('admin/add_product', {
         title: title,
-        slug: slug,
-        content: content
+        desc: desc,
+        price: price,
+        cats: cats
     });
+  }).catch((err)=>{console.log(err)});
 })
 
 
 /* 
-* POST add page 
+* POST add product 
 */
-router.post('/add_page',[
+router.post('/add-prodcut',[
     check('title', 'title must have a value').notEmpty(),
-    check('content', 'content must have a value').notEmpty()
+    check('desc', 'Description must have a value').notEmpty(),
+    check('price', 'Price must have a decimal value').isDecimal(),
+    check('image').custom( (val , {req}) => {
+        var imageFile = typeof(req.files.image) !== "undefined" ? req.files.image.name : "";
+        if (!isImg(val, imageFile)){
+            throw new Error('You must include Image');
+        };
+        return true;
+    })
 
 ] ,(req, res)=>{
     
+    
+   var title = req.body.title;
+   var slug = req.body.title.replace(/\s+/g,'-').toLowerCase();
+   var price = req.body.price;
+   var desc = req.body.desc;
+   var categorey = req.body.categorey;
+   var imageFile = typeof(req.files.image) !== "undefined" ? req.files.image.name : "";
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-    return res.render( 'admin/add_page' ,{ 
-        errors: errors.array(),
-        title: title,
-        slug: slug,
-        content: content
-     });
+    return  CategoreyModel.find().then((cats) =>{
+        res.render('admin/add_product', {
+            errors: errors.array(),
+            title: title,
+            desc: desc,
+            price: price,
+            cats: cats
+        });
+      }).catch((err)=>{console.log(err)});
    }
 
-   var title = req.body.title;
-   var slug = req.body.slug.replace(/\s+/g,'-').toLowerCase();
-   var content = req.body.content;
-
-   if(slug ==""){ slug= req.body.title.replace(/\s+/g,'-').toLowerCase();}
    
-   PageModel.findOne({slug: slug}).then((page)=>{
-       if(page){
-           req.flash('danger', 'page slug exsits, choose another slug');
-           res.render('admin/add_page', {
-            errors: errors,
-            title: title,
-            slug: slug,
-            content: content
-        });
+   ProductModel.findOne({slug: slug}).then((product)=>{
+       if(product){
+           req.flash('danger', 'product exsits, choose another name');
+           CategoreyModel.find().then((cats) =>{
+            res.render('admin/add_product', {
+                title: title,
+                desc: desc,
+                price: price,
+                cats: cats
+            });
+          });
+
        } else{
-           var newPage = new PageModel({
+           var price2  = parseFloat(price).toFixed(2);
+
+           var newProduct = new ProductModel({
             title: title,
             slug: slug,
-            content: content,
-            sorting:100
+            desc: desc,
+            price: price2,
+            categorey: categorey, 
+            image: imageFile
            })
 
-           newPage.save((err)=>{
+           newProduct.save((err)=>{
                if(err){console.log(err);}
-               req.flash('success', 'page added')
-               res.redirect('/admin/pages');
 
+               mkdirp('public/images/product_imgs/'+newProduct._id)
+               .then(()=>{
+                    mkdirp('public/images/product_imgs/'+newProduct._id+'/gallery')
+               .then(()=>{
+                        mkdirp('public/images/product_imgs/'+newProduct._id+'/gallery/thumbs')
+                .then(()=>{
+                    if(imageFile != ""){
+                        var productImage = req.files.image;
+                        var path = 'public/product_imgs'+newProduct._id+'/'+imageFile;
+
+
+                        productImage.mv(path, ()=>{
+                            req.flash('success', 'product added')
+                            res.redirect('/admin/products');
+
+                        });
+
+                        
+                                     }
+
+                        })
+                    })
+               })
+
+               
            });
        }
    }).catch((err)=>{console.log(err)});
