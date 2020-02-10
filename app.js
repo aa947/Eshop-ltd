@@ -5,6 +5,7 @@ require('dotenv').config();
 var bodyParser = require('body-parser');
 var session = require('express-session');
 const { check, validationResult } = require('express-validator');
+var fileUpload = require('express-fileupload');
 
 
 //connect to db
@@ -31,6 +32,9 @@ app.use( express.static(path.join(__dirname, 'public')))
 
 //global variable for errors 
 app.locals.errors =null;
+
+// fileUpload
+app.use(fileUpload());
 // bodyParser
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -74,7 +78,9 @@ app.use(function (req, res, next) {
 var pages = require('./routes/pages');
 var adminPages = require('./routes/adminPages');
 var adminCategories = require('./routes/adminCategories');
+var adminProducts = require('./routes/adminProducts');
 
+app.use('/admin/products', adminProducts);
 app.use('/admin/categories', adminCategories);
 app.use('/admin/pages', adminPages);
 app.use('/', pages);
