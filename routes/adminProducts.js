@@ -55,9 +55,10 @@ router.post('/add-prodcut',[
     check('desc', 'Description must have a value').notEmpty(),
     check('price', 'Price must have a decimal value').isDecimal(),
     check('image').custom( (val , {req}) => {
+        if(!req.files){throw new Error('You must include an Image');}
         var imageFile = typeof(req.files.image) !== "undefined" ? req.files.image.name : "";
         if (!isImg(val, imageFile)){
-            throw new Error('You must include Image');
+            throw new Error('You must include an Image');
         };
         return true;
     })
@@ -70,8 +71,10 @@ router.post('/add-prodcut',[
    var price = req.body.price;
    var desc = req.body.desc;
    var categorey = req.body.categorey;
+   if(!req.files){ imageFile =""; }
+   if(req.files){
    var imageFile = typeof(req.files.image) !== "undefined" ? req.files.image.name : "";
-    
+   }
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
     return  CategoreyModel.find().then((cats) =>{
