@@ -27,7 +27,7 @@
         <%= element.title %>
       </td>
       <td>
-        £<%= element.price %>
+        £<%= parseFloat(element.price).toFixed(2) %>
       </td>
       <td>
         <%= element.categorey %>

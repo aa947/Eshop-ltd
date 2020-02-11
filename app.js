@@ -41,6 +41,15 @@ PageModel.find({}).sort({sorting: 1}).exec().then((pages)=>{
   app.locals.pages =pages;
 }).catch((err)=>{console.log(err)});
 
+
+//global variable for categories
+var CategoreyModel = require('./models/categories');
+
+CategoreyModel.find({}).then((categories)=>{
+  app.locals.categories =categories;
+}).catch((err)=>{console.log(err)});
+
+
 // fileUpload
 app.use(fileUpload());
 // bodyParser
@@ -84,10 +93,12 @@ app.use(function (req, res, next) {
 
 //routes
 var pages = require('./routes/pages');
+var products = require('./routes/products');
 var adminPages = require('./routes/adminPages');
 var adminCategories = require('./routes/adminCategories');
 var adminProducts = require('./routes/adminProducts');
 
+app.use('/products', products);
 app.use('/admin/products', adminProducts);
 app.use('/admin/categories', adminCategories);
 app.use('/admin/pages', adminPages);

@@ -1,5 +1,9 @@
 <%- include('layouts/header'); -%>
 
-<h1> Hello there </h1>
+<% if (title =="home") { %>
+ <h1>Home</h1>
+<% } else {%>
+<h1><%- content %> </h1> content 
+<% } %> 
 
 <%- include('layouts/footer'); -%>

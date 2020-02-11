@@ -17,6 +17,17 @@ router.get('/', (req, res)=>{
    }).catch((err)=>{console.log(err)});
 })
 
+/*
+* function used to update the global variable pages, every
+* time we delete or edit or insert anew page
+*/
+
+var updateGlobalCategories = (req) =>{
+    CategoreyModel.find({}).then((categories)=>{
+        req.app.locals.categories =categories;
+      }).catch((err)=>{console.log(err)});
+}
+
 /* 
 * Get add categorey 
 */
@@ -71,7 +82,8 @@ router.post('/add_categorey',[
 
            newCat.save((err)=>{
                if(err){console.log(err);}
-               req.flash('success', 'categorey added')
+               req.flash('success', 'categorey added');
+               updateGlobalCategories(req);
                res.redirect('/admin/categories');
 
            });
@@ -99,7 +111,7 @@ router.get('/edit-categorey/:slug', (req, res)=>{
 })
 
 /* 
-* POST Edit page 
+* POST Edit categorey
 */
 router.post('/edit-categorey/:slug',[
     check('title', 'title must have a value').notEmpty(),
@@ -140,6 +152,7 @@ router.post('/edit-categorey/:slug',[
                cat.save((err)=>{
                 if(err){console.log(err);}
                 req.flash('success', 'categorey Edited');
+                updateGlobalCategories(req);
                 res.redirect('/admin/categories');
             });
            })
@@ -155,6 +168,7 @@ router.post('/edit-categorey/:slug',[
 router.get('/delete-categorey/:id', (req, res)=>{
     CategoreyModel.findByIdAndRemove(req.params.id).then(()=>{
         req.flash('success', 'Categorey Deleted');
+        updateGlobalCategories(req);
         res.redirect('/admin/categories');
 
     }).catch((err)=>{console.log(err)});
