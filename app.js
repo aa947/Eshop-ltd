@@ -35,7 +35,11 @@ app.use( express.static(path.join(__dirname, 'public')))
 app.locals.errors =null;
 
 //global variable for pages
+var PageModel = require('./models/page');
 
+PageModel.find({}).sort({sorting: 1}).exec().then((pages)=>{
+  app.locals.pages =pages;
+}).catch((err)=>{console.log(err)});
 
 // fileUpload
 app.use(fileUpload());

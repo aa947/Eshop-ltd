@@ -18,6 +18,20 @@ router.get('/', (req, res)=>{
    }).catch((err)=>{console.log(err)});
 })
 
+/*
+* function used to update the global variable pages, every
+* time we delete or edit or insert anew page
+*/
+
+var updateGlobalPages = (req) =>{
+    PageModel.find({}).sort({sorting: 1}).exec().then((pages)=>{
+        req.app.locals.pages =pages;
+      }).catch((err)=>{console.log(err)});
+}
+
+
+
+
 /* 
 * Get add page 
 */
@@ -78,7 +92,8 @@ router.post('/add_page',[
 
            newPage.save((err)=>{
                if(err){console.log(err);}
-               req.flash('success', 'page added')
+               req.flash('success', 'page added');
+               updateGlobalPages(req);
                res.redirect('/admin/pages');
 
            });
@@ -98,7 +113,11 @@ router.post('/reorder-pages', (req, res)=>{
         PageModel.findById(id).then((page)=>{
             page.sorting = index+1;
             page.save();
-        }).catch((err)=>{console.log(err)});
+        })
+        .then(()=>{
+            updateGlobalPages(req);
+        })
+        .catch((err)=>{console.log(err)});
    });
  })
  
@@ -169,6 +188,7 @@ router.post('/edit-page/:id',[
                page.save((err)=>{
                 if(err){console.log(err);}
                 req.flash('success', 'page Edited');
+                updateGlobalPages(req);
                 res.redirect('/admin/pages');
             });
            })
@@ -184,6 +204,7 @@ router.post('/edit-page/:id',[
 router.get('/delete-page/:id', (req, res)=>{
     PageModel.findByIdAndRemove(req.params.id).then(()=>{
         req.flash('success', 'page Deleted');
+        updateGlobalPages(req);
         res.redirect('/admin/pages');
 
     }).catch((err)=>{console.log(err)});
