@@ -8,7 +8,14 @@
     <% products.forEach((p) => { %>
             <div class="col-xs-12 col-md-4 p">
                 <a class="pa" href="/products/<%= p.categorey %>/<%= p.slug %>">
-                    <img class="pimage" src="/images/product_imgs/<%= p.id %>/<%= p.image %>" alt="">
+                    <% if (p.image == "") { %>
+
+                        <img id="noImage" class="pimage"  src="/images/noImage.jpg" alt="" />
+                
+                        <% } else { %>
+                
+                            <img class="pimage" src="/images/product_imgs/<%= p.id %>/<%= p.image %>" alt="">
+                        <% }  %>
                 </a>
                 <h3><%= p.title %></h3>
                 <h4>£<%= parseFloat(p.price).toFixed(2) %></h4>

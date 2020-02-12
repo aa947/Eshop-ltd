@@ -57,7 +57,7 @@ router.post('/add-prodcut',[
     check('desc', 'Description must have a value').notEmpty(),
     check('price', 'Price must have a decimal value').isDecimal(),
     check('image').custom( (val , {req}) => {
-        if(!req.files){throw new Error('You must include an Image');}
+        if(!req.files){return true;}
         var imageFile = typeof(req.files.image) !== "undefined" ? req.files.image.name : "";
         if (!isImg(val, imageFile)){
             throw new Error('You must include an Image');
@@ -137,6 +137,11 @@ router.post('/add-prodcut',[
                         });
 
                         
+                                     } else{
+
+                                        req.flash('success', 'product added with Default Image')
+                                        res.redirect('/admin/products');
+
                                      }
 
                         })

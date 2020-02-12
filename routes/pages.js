@@ -1,21 +1,25 @@
 var express = require('express');
 var router = express.Router();
 var PageModel = require('../models/page');
+var ProductModel = require('../models/products');
+
 
 /*
 * Get Home Page
 */
 
 router.get('/', (req, res)=>{
-    PageModel.findOne({slug: 'home'}, function (err, page) {
-        if (err)
-            console.log(err);
+    ProductModel.find().then((products)=>{
+        if(!products){
+            res.redirect('/');
+        }else{
+            res.render('home', {
+                title: 'Welcome to Hex LTD Shop',
+                products: products
+            })
+        }
 
-        res.render('index', {
-            title: page.title,
-            content: page.content
-        });
-    });
+    }).catch((err)=>{console.log(err)});
 })
 
 
@@ -28,15 +32,21 @@ router.get('/:slug', (req, res)=>{
 
     if(slug == 'contact'){
 
-        res.render('index', {
-            title: page.title,
-            content: page.content
+      return  res.render('contact', {
+            title: 'Contact US',
+        })
+
+    }
+
+    if(slug == 'about'){
+
+      return   res.render('about', {
+            title: 'About US',
         })
 
     }
 
     PageModel.findOne({slug: slug}).then((page)=>{
-        console.log(page);
         if(!page){
             res.redirect('/');
         }else{
