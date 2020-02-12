@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var ProductModel = require('../models/products');
+require('dotenv').config();
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 /*
 * Get Home Page
@@ -61,9 +63,11 @@ router.get('/checkout', function (req, res) {
         delete req.session.cart;
         res.redirect('/cart/checkout');
     } else {
+        console.log('key', process.env.STRIPE_PUBLISHABLE_KEY);
         res.render('checkout', {
             title: 'Checkout',
-            cart: req.session.cart
+            cart: req.session.cart,
+            stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY
         });
     }
 
@@ -123,14 +127,39 @@ router.get('/clear', function (req, res) {
 /*
  * GET buy now
  */
-router.get('/buynow', function (req, res) {
+router.get('/charge', function (req, res) {
 
-    delete req.session.cart;
     
-    res.sendStatus(200);
+    stripe.customers.create({
+        email: req.body.stripeEmail,
+        source: req.body.stripeToken,
+    })
+    .then(customer =>{
+        stripe.charges.create({
+            amount: order.amount,
+            description: 'luxury tissue box representing your elegance',
+            currency: 'GBP',
+            customer: customer.id
+        })
+    })
+    .then(charge =>{
+        delete req.session.cart;
+        res.sendStatus(200);
+    });
+ 
 
 });
 
+router.post('/charge', function (req, res) {
+
+req.flash('success', 'Paid! .. please continue with Delivery options');
+// res.render('success', {
+//     title: 'Delivery'
+// });
+delete req.session.cart;
+res.redirect('/delivery');
+
+})
 
 //export router 
 module.exports= router;

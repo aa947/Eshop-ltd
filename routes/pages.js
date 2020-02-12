@@ -30,6 +30,14 @@ router.get('/', (req, res)=>{
 router.get('/:slug', (req, res)=>{
     var slug = req.params.slug;
 
+    if(slug == 'delivery'){
+
+        return  res.render('success', {
+              title: 'Delivery',
+          })
+  
+      }
+
     if(slug == 'contact'){
 
       return  res.render('contact', {

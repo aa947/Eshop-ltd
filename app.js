@@ -7,6 +7,7 @@ var session = require('express-session');
 const { check, validationResult } = require('express-validator');
 var fileUpload = require('express-fileupload');
 var passport = require('passport');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 
 //connect to db

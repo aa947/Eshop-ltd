@@ -18,9 +18,11 @@
     </tr>
     
     <% var total = 0; %>
+    <% var names =[]  %> 
     <% cart.forEach(function(product){ %>
     <% var sub = parseFloat(product.qty * product.price).toFixed(2) %>
     <% total += +sub %>
+    <% names.push(product.title) %> 
     <tr>
         <td><img class="cpi" src="<%= product.image %>" alt=""></td>
         <td><%= product.title %></td>
@@ -42,27 +44,27 @@
             <a class="clearcart btn btn-danger" href="/cart/clear">Clear cart</a>
         </td>
         <td colspan="5" align="right">
-            <a class="btn btn-primary buynow" href="#">Buy now</a>
+            <form  action="/cart/charge" method="POST">
+    <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+        data-key="pk_test_ndmsGOBtHLyzgyfuCQl1l9DE00TcqwLQSE" data-amount="<%= total *100 %>"  data-name="<%= names  %> "
+        data-description="products in cart" data-image="/images/marketplace.png" data-locale="auto"
+        data-currency="gbp">
+        </script>
+        <script>
+            //hide default strip button
+            document.getElementsByClassName('stripe-button-el')[0].style.display = 'none';
+        </script>
+    
+        <button type="submit" class="btn btn-primary buynow" >Buy now </button>
+</form>
+            <!-- <a class="btn btn-primary buynow" href="#">Buy now</a> -->
         </td>
     </tr>
     
 </table>
 
-<form class="pp" action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
-<input type="hidden" name="cmd" value="_cart">
-<input type="hidden" name="upload" value="1">
-<input type="hidden" name="business" value="jultranet-facilitator@gmail.com">
-<% var num = 0; %>
-<% cart.forEach(function(p){ %>
-    <% num++ %>
-    <input type="hidden" name="item_name_<%= num %>" value="<%= p.title %>">
-    <input type="hidden" name="amount_<%= num %>" value="<%= p.price %>">
-    <input type="hidden" name="quantity_<%= num %>" value="<%= p.qty %>">
-<% }); %>
-<input type="hidden" name="currency_code" value="USD">
-<input type="hidden" name="amount" value="<%= total %>">
-<input type="image" src="http://www.paypal.com/en_US/i/btn/x-click-but01.gif" name="submit" alt="Make payments with PayPal - it's fast, free and secure!">
-</form>
+
+
 
 <% } else {%>
 <h3 class="text-center">Your cart is empty.</h3>
@@ -83,15 +85,10 @@ $(function() {
         if (!confirm('Are you sure you want to clear cart ??'))
             return false;
     });
+
+   
     
-    $('a.buynow').on('click', function (e) {
-        e.preventDefault();
-        
-        jQuery.get('/cart/buynow', function() {
-            $('form.pp input[type=image]').click();
-            $('.ajaxbg').show();
-        });
-    });
+   
         
 });
     
