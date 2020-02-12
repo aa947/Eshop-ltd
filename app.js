@@ -91,13 +91,21 @@ app.use(function (req, res, next) {
 });
 
 
+//start Cart session
+app.get('*', (req, res, next)=>{
+  res.locals.cart = req.session.cart;
+  next();
+})
+
 //routes
 var pages = require('./routes/pages');
 var products = require('./routes/products');
+var cart = require('./routes/cart');
 var adminPages = require('./routes/adminPages');
 var adminCategories = require('./routes/adminCategories');
 var adminProducts = require('./routes/adminProducts');
 
+app.use('/cart', cart);
 app.use('/products', products);
 app.use('/admin/products', adminProducts);
 app.use('/admin/categories', adminCategories);
