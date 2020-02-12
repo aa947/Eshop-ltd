@@ -26,6 +26,15 @@ router.get('/', (req, res)=>{
 router.get('/:slug', (req, res)=>{
     var slug = req.params.slug;
 
+    if(slug == 'contact'){
+
+        res.render('index', {
+            title: page.title,
+            content: page.content
+        })
+
+    }
+
     PageModel.findOne({slug: slug}).then((page)=>{
         console.log(page);
         if(!page){

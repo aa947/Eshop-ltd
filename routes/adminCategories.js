@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const { check, validationResult } = require('express-validator');
+var auth = require('../config/auth');
+var isAdmin = auth.isAdmin;
 
 //require categorey model
 var CategoreyModel = require('../models/categories');
@@ -9,7 +11,7 @@ var CategoreyModel = require('../models/categories');
 /* 
 * Get Cats index
 */
-router.get('/', (req, res)=>{
+router.get('/',  isAdmin,  (req, res)=>{
    CategoreyModel.find().then((cats)=>{
        res.render('admin/categories', {
            cats:cats
@@ -31,7 +33,7 @@ var updateGlobalCategories = (req) =>{
 /* 
 * Get add categorey 
 */
-router.get('/add_categorey', (req, res)=>{
+router.get('/add_categorey', isAdmin,  (req, res)=>{
     var title = "";
     var slug = "";
 
@@ -98,7 +100,7 @@ router.post('/add_categorey',[
  /* 
 * Get Edit Categorey
 */
-router.get('/edit-categorey/:slug', (req, res)=>{
+router.get('/edit-categorey/:slug',  isAdmin,  (req, res)=>{
     CategoreyModel.findOne({slug: req.params.slug})
     .then((cat)=>{
         res.render('admin/edit_categorey', {
@@ -165,7 +167,7 @@ router.post('/edit-categorey/:slug',[
 /* 
 * Get delete categorey
 */
-router.get('/delete-categorey/:id', (req, res)=>{
+router.get('/delete-categorey/:id',  isAdmin, (req, res)=>{
     CategoreyModel.findByIdAndRemove(req.params.id).then(()=>{
         req.flash('success', 'Categorey Deleted');
         updateGlobalCategories(req);

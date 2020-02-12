@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 const { check, validationResult } = require('express-validator');
 var fileUpload = require('express-fileupload');
+var passport = require('passport');
 
 
 //connect to db
@@ -91,20 +92,31 @@ app.use(function (req, res, next) {
 });
 
 
+
+//passport 
+require('./config/passport')(passport);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 //start Cart session
 app.get('*', (req, res, next)=>{
   res.locals.cart = req.session.cart;
+  res.locals.user = req.user || null;
   next();
 })
 
 //routes
 var pages = require('./routes/pages');
 var products = require('./routes/products');
+var users = require('./routes/users');
 var cart = require('./routes/cart');
 var adminPages = require('./routes/adminPages');
 var adminCategories = require('./routes/adminCategories');
 var adminProducts = require('./routes/adminProducts');
 
+app.use('/users', users);
 app.use('/cart', cart);
 app.use('/products', products);
 app.use('/admin/products', adminProducts);

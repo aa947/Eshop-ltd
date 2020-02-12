@@ -5,6 +5,8 @@ var fs = require('fs-extra');
 var mkdirp = require('mkdirp');
 var resizeImg = require('resize-img');
 var isImg = require('../tests/imageValidator');
+var auth = require('../config/auth');
+var isAdmin = auth.isAdmin;
 
 //require Products model
 var ProductModel = require('../models/products');
@@ -16,7 +18,7 @@ var CategoreyModel = require('../models/categories');
 /* 
 * Get products index
 */
-router.get('/', (req, res)=>{
+router.get('/', isAdmin, (req, res)=>{
 
     var count;
     ProductModel.count((err, c)=>{ count=c; }) 
@@ -32,7 +34,7 @@ router.get('/', (req, res)=>{
 /* 
 * Get add product 
 */
-router.get('/add_product', (req, res)=>{
+router.get('/add_product', isAdmin,  (req, res)=>{
     var title = "";
     var desc = "";
     var price = "";
@@ -153,7 +155,7 @@ router.post('/add-prodcut',[
  /* 
 * Get Edit product 
 */
-router.get('/edit-product/:id', (req, res)=>{
+router.get('/edit-product/:id', isAdmin,  (req, res)=>{
 
     var errors;
     if(req.session.errors){ errors = req.session.errors }
@@ -205,8 +207,6 @@ router.post('/edit-product/:id',[
         return true;
     })
 ] ,(req, res)=>{
-    console.log('files' , req.files);
-    console.log('body',req.body);
 
     var title = req.body.title;
     var slug = req.body.title.replace(/\s+/g,'-').toLowerCase();
@@ -228,7 +228,6 @@ router.post('/edit-product/:id',[
 
     
     const errors = validationResult(req);
-    console.log( 'errors after check' , errors.errors);
     if (!errors.isEmpty()) {
        // req.session.errors = errors;
 
@@ -376,7 +375,7 @@ router.post('/product-gallery/:id', function (req, res) {
 /*
  * GET delete image
  */
-router.get('/delete-image/:image',  function (req, res) {
+router.get('/delete-image/:image',  isAdmin,  function (req, res) {
 
     var originalImage = 'public/images/product_imgs/' + req.query.id + '/gallery/' + req.params.image;
     var thumbImage = 'public/images/product_imgs/' + req.query.id + '/gallery/thumbs/' + req.params.image;
@@ -400,7 +399,7 @@ router.get('/delete-image/:image',  function (req, res) {
 /*
  * GET delete product
  */
-router.get('/delete-product/:id',  function (req, res) {
+router.get('/delete-product/:id',  isAdmin,   function (req, res) {
 
     var id = req.params.id;
     var path = 'public/images/product_imgs/' + id;

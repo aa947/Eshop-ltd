@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 const { check, validationResult } = require('express-validator');
 var mongoose = require('mongoose');
+var auth = require('../config/auth');
+var isAdmin = auth.isAdmin;
 
 //require page model
 var PageModel = require('../models/page');
@@ -10,7 +12,7 @@ var PageModel = require('../models/page');
 /* 
 * Get page index
 */
-router.get('/', (req, res)=>{
+router.get('/', isAdmin,  (req, res)=>{
    PageModel.find({}).sort({sorting: 1}).exec().then((pages)=>{
        res.render('admin/pages', {
            pages:pages
@@ -35,7 +37,7 @@ var updateGlobalPages = (req) =>{
 /* 
 * Get add page 
 */
-router.get('/add_page', (req, res)=>{
+router.get('/add_page', isAdmin,  (req, res)=>{
     var title = "";
     var slug = "";
     var content = "";
@@ -125,7 +127,7 @@ router.post('/reorder-pages', (req, res)=>{
  /* 
 * Get Edit page 
 */
-router.get('/edit-page/:id', (req, res)=>{
+router.get('/edit-page/:id', isAdmin,  (req, res)=>{
     PageModel.findById( req.params.id.trim())
     .then((page)=>{
         res.render('admin/edit_page', {
@@ -201,7 +203,7 @@ router.post('/edit-page/:id',[
 /* 
 * Get delete Page
 */
-router.get('/delete-page/:id', (req, res)=>{
+router.get('/delete-page/:id',  isAdmin,  (req, res)=>{
     PageModel.findByIdAndRemove(req.params.id).then(()=>{
         req.flash('success', 'page Deleted');
         updateGlobalPages(req);

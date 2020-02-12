@@ -60,7 +60,7 @@ router.get('/:categorey', (req, res)=>{
 router.get('/:category/:product', function (req, res) {
 
     var galleryImages = null;
-    // var loggedIn = (req.isAuthenticated()) ? true : false;
+     var loggedIn = (req.isAuthenticated()) ? true : false;
 
     ProductModel.findOne({slug: req.params.product}, function (err, product) {
         if (err) {
@@ -78,6 +78,7 @@ router.get('/:category/:product', function (req, res) {
                         title: product.title,
                         p: product,
                         galleryImages: galleryImages,
+                        loggedIn: loggedIn
                     });
                 }
             });
